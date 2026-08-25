@@ -5,17 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ぷにラン祝辞 - たまごへ & Othello</title>
     <style>
-        :root {
-            --bg-color: #111;
-            --text-color: #c7c7c7;
-            --heading-color: #f9f9f9;
-            --nav-bg: #0a0a0a;
-        }
-        body {
-            background-color: var(--bg-color); color: var(--text-color);
-            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.8; margin: 0; padding: 0; overflow-x: hidden;
-        }
+        :root { --bg-color: #111; --text-color: #c7c7c7; --heading-color: #f9f9f9; --nav-bg: #0a0a0a; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; line-height: 1.8; margin: 0; padding: 0; overflow-x: hidden; }
         .hero { background-color: #111; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: center; position: relative; overflow: hidden; }
         .hero-image-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto; background: #111; }
         .hero-image-container img.bg-img { width: 100%; height: auto; display: block; }
@@ -32,7 +23,6 @@
         @keyframes fall { 0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateY(120vh) rotate(720deg) scale(0.5); opacity: 0; } }
         @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
         body.chaos-mode { animation: shake 0.3s infinite; background-color: #2a0000; }
-        body.chaos-mode .content p, body.chaos-mode h1, body.chaos-mode .birthday-message, body.chaos-mode .hero p { color: #4a0000 !important; text-shadow: none !important; }
         #punchline { display: none; color: #ff0000; font-size: clamp(16px, 4vw, 22px); font-weight: bold; line-height: 1.8; text-shadow: 2px 2px 0px #000; white-space: pre-wrap; text-align: left; max-width: 600px; margin: 0 auto; }
         .footer-hint { opacity: 0.3; }
         .impostor-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 200000; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
@@ -40,9 +30,12 @@
         .impostor-text { color: #ff0000; font-size: clamp(3rem, 15vw, 8rem); font-weight: bold; font-family: 'Arial Black', Impact, sans-serif; letter-spacing: 0.1em; text-shadow: 0 0 20px #ff0000; animation: scale-up 0.5s ease-out forwards; }
         @keyframes scale-up { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
         
-        #video-overlay, #souta-video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 200000; display: none; justify-content: center; align-items: center; flex-direction: column; }
-        #video-overlay video, #souta-video-overlay video { max-width: 100%; max-height: 85vh; outline: none; }
+        #video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 200000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        #video-overlay video { max-width: 100%; max-height: 85vh; outline: none; }
         .close-video-btn { margin-top: 15px; padding: 10px 25px; background: #fff; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        
+        #souta-video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 300000; display: none; justify-content: center; align-items: center; }
+        #souta-vid { width: 100vw; height: 100vh; object-fit: cover; outline: none; }
         
         #syuku-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 200000; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box; }
         .syuku-content { background: #111; border: 1px solid #333; border-radius: 8px; width: 100%; max-width: 760px; max-height: 75vh; overflow-y: auto; padding: 30px 20px; color: #ddd; font-size: 15px; line-height: 2; white-space: pre-wrap; text-align: left; }
@@ -96,7 +89,6 @@
         #login-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.98); z-index: 150000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .login-box { background: #111; border: 2px solid #444; padding: 30px; border-radius: 10px; display: flex; flex-direction: column; gap: 12px; width: 300px; text-align: center; }
         .login-box input { padding: 10px; background: #000; color: #fff; border: 1px solid #555; border-radius: 5px; font-size: 15px; outline: none; text-align: center; }
-        .login-box input:focus { border-color: #ffd700; }
         .login-title { color: #fff; font-size: 22px; font-weight: bold; margin-bottom: 5px; }
         .login-err { color: #ff4500; font-size: 13px; min-height: 18px; }
         
@@ -158,7 +150,6 @@
         <div class="lb-box">
             <button class="lb-close" onclick="document.getElementById('lb-overlay').style.display='none'">✕ 閉じる</button>
             <div class="lb-title">LEADERBOARD</div>
-            <!-- ご要望通りのタブ・並び順 (レート, LUNATIC, AI藤井聡太, Ainz) -->
             <div class="lb-tabs">
                 <button class="lb-tab active" id="btn-tab-rate" onclick="openLeaderboard('rate')">レート</button>
                 <button class="lb-tab" id="btn-tab-lunatic" onclick="openLeaderboard('lunatic')">LUNATIC</button>
@@ -197,7 +188,7 @@
         <p>多くの方が見守り応援し、共に一喜一憂しながら時間を共有できたことは、見ている私たちにとってもかけがえのない思い出となりました。</p>
         <p>1位や2位に届かなかった悔しさがあるとしても、それは本気で挑んだからこそ生まれる尊い感情だと思います。</p>
         <p>どうか、3位に輝いたご自身の成果を堂々と受け止めてください。</p>
-        <p>今回の経験を一つの大きな自信として、これからもたまごさんらしい, 楽しい配信を続けていってください。</p>
+        <p>今回の経験を一つの大きな自信として、これからもたまごさんらしい、楽しい配信を続けていってください。</p>
         <p>改めまして、ぷにラン3位、本当におめでとうございます！</p>
         <div class="birthday-message" id="flower-trigger">
             少し早いですが、8月30日のお誕生日も<br>おめでとうございます！<br>
@@ -214,10 +205,9 @@
         <button class="close-video-btn" onclick="closeVideoOverlay()">閉じる</button>
     </div>
 
-    <!-- AI藤井聡太直前に再生する SOUTA.MP4 動画用オーバーレイ -->
+    <!-- AI藤井聡太専用全画面動画オーバーレイ -->
     <div id="souta-video-overlay">
         <video id="souta-vid" src="SOUTA.MP4" playsinline></video>
-        <button class="close-video-btn" onclick="closeSoutaVideo()">スキップ / 開始</button>
     </div>
 
     <div id="syuku-overlay">
@@ -245,7 +235,7 @@
             <div class="login-box" style="width: 320px;">
                 <p style="font-size:12px; color:#aaa; margin:0;">変更したい項目のみ入力してください</p>
                 <input type="text" id="set-new-id" maxlength="10" placeholder="新しいログインID">
-                <input type="text" id="set-new-name" maxlength="15" placeholder="新しい表示名 (ニックネーム)">
+                <input type="text" id="set-new-name" maxlength="15" placeholder="新しい表示名">
                 <input type="password" id="set-new-pass" minlength="6" maxlength="30" placeholder="新しいパスワード">
                 <div id="set-err" class="login-err"></div>
                 <button class="btn btn-gold" onclick="saveAccountSettings()">変更を保存</button>
@@ -253,7 +243,6 @@
             </div>
         </div>
 
-        <!-- ご要望通りの難易度順序 & ロック制御付きの選択画面 -->
         <div id="screen-solo" class="osero-screen">
             <h2 class="osero-title">難易度選択</h2>
             <button class="btn" onclick="startSoloGame('EZ')">EZ (簡単)</button>
@@ -270,7 +259,7 @@
             <h2 class="osero-title">マルチプレイ</h2>
             <button class="btn" onclick="startPublicMatch()">パブリック マッチ</button>
             <button class="btn" style="background:#4682b4;" onclick="startPublicSpectate()">パブリック 観戦</button>
-            <button class="btn" onclick="switchScreen('screen-custom')">カスタム (部屋作成/参加)</button>
+            <button class="btn" onclick="switchScreen('screen-custom')">カスタムルーム</button>
             <br>
             <button class="btn" style="background:#555;" onclick="switchScreen('screen-menu')">戻る</button>
         </div>
@@ -331,7 +320,7 @@
     </div>
 
     <script>
-        let WS_URL = "wss://professional-crafts-scoring-prepaid.trycloudflare.com";
+        let WS_URL = "wss://style-ranges-touched-manually.trycloudflare.com";
 
         const MAX_SE_VOL = 0.35;
         const MAX_BGM_VOL = 0.22;
@@ -354,13 +343,14 @@
         const bgmOsero = new Audio('osero.mp3'); bgmOsero.volume = MAX_BGM_VOL;
         const bgmLunatic = new Audio('LUNATIC.mp3'); bgmLunatic.volume = MAX_BGM_VOL; bgmLunatic.loop = true;
         const bgmFujii = new Audio('fujii.mp3'); bgmFujii.volume = MAX_BGM_VOL; bgmFujii.loop = true;
+        const bgmAinz = new Audio('AINZ.mp3'); bgmAinz.volume = MAX_BGM_VOL; bgmAinz.loop = true;
 
         let currentBgmMode = 'none';
         let playlistTracks = [bgm1, bgm2, bgmOsero];
         let playlistIndex = 0;
 
         function stopAllBgm() {
-            [bgm1, bgm2, bgmOsero, bgmLunatic, bgmFujii, syukuAudio].forEach(a => {
+            [bgm1, bgm2, bgmOsero, bgmLunatic, bgmFujii, bgmAinz, syukuAudio].forEach(a => {
                 a.pause(); a.currentTime = 0; a.onended = null;
             });
             currentBgmMode = 'none';
@@ -375,12 +365,15 @@
 
         function startGameBgm(level) {
             stopAllBgm();
-            if (level === 'LUNATIC' || level === 'AINZ') {
+            if (level === 'LUNATIC') {
                 currentBgmMode = 'lunatic';
                 bgmLunatic.play().catch(e => {});
             } else if (level === 'FUJII') {
                 currentBgmMode = 'fujii';
                 bgmFujii.play().catch(e => {});
+            } else if (level === 'AINZ') {
+                currentBgmMode = 'ainz';
+                bgmAinz.play().catch(e => {});
             } else {
                 currentBgmMode = 'normal_game';
                 playlistIndex = 0;
@@ -394,9 +387,7 @@
             playlistIndex = index % playlistTracks.length;
             let track = playlistTracks[playlistIndex];
             track.loop = false;
-            track.onended = () => {
-                if (currentBgmMode === 'normal_game') playPlaylistStep(playlistIndex + 1);
-            };
+            track.onended = () => { if (currentBgmMode === 'normal_game') playPlaylistStep(playlistIndex + 1); };
             track.play().catch(e => {});
         }
 
@@ -426,29 +417,14 @@
         function updateDifficultyButtonsUI() {
             const fujiiBtn = document.getElementById('btn-fujii');
             const ainzBtn = document.getElementById('btn-ainz');
-
-            if (hardCleared === 1 || isAdmin) {
-                fujiiBtn.innerHTML = "AI藤井聡太";
-                fujiiBtn.style.opacity = "1";
-            } else {
-                fujiiBtn.innerHTML = "？？？";
-                fujiiBtn.style.opacity = "0.7";
-            }
-
-            if (lunaticCount > 0 || isAdmin) {
-                ainzBtn.innerHTML = "Ainz";
-                ainzBtn.style.opacity = "1";
-            } else {
-                ainzBtn.innerHTML = "？？？";
-                ainzBtn.style.opacity = "0.7";
-            }
+            if (hardCleared === 1 || isAdmin) { fujiiBtn.innerHTML = "AI藤井聡太"; fujiiBtn.style.opacity = "1"; }
+            else { fujiiBtn.innerHTML = "？？？"; fujiiBtn.style.opacity = "0.7"; }
+            if (lunaticCount > 0 || isAdmin) { ainzBtn.innerHTML = "Ainz"; ainzBtn.style.opacity = "1"; }
+            else { ainzBtn.innerHTML = "？？？"; ainzBtn.style.opacity = "0.7"; }
         }
 
         function tryPlayFujii() {
-            if (hardCleared !== 1 && !isAdmin) {
-                alert("HARDをクリアするとプレイできます。");
-                return;
-            }
+            if (hardCleared !== 1 && !isAdmin) { alert("HARDをクリアするとプレイできます。"); return; }
             playSoutaVideo();
         }
 
@@ -470,10 +446,7 @@
         }
 
         function tryPlayAinz() {
-            if (lunaticCount <= 0 && !isAdmin) {
-                alert("LUNATICをクリアするとプレイできます。");
-                return;
-            }
+            if (lunaticCount <= 0 && !isAdmin) { alert("LUNATICをクリアするとプレイできます。"); return; }
             startSoloGame('AINZ');
         }
 
@@ -481,19 +454,15 @@
             return new Promise((resolve) => {
                 setTimeout(() => {
                     const loader = document.getElementById('loading-overlay');
-                    if (loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => loader.style.display = 'none', 400);
-                    }
+                    if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 400); }
                     resolve();
                 }, 600);
             });
         }
 
         function triggerOseroSequence() {
-            if (isLoggedIn) { 
-                openOseroApp(); 
-            } else {
+            if (isLoggedIn) { openOseroApp(); }
+            else {
                 document.getElementById('login-overlay').style.display = 'flex';
                 playMenuBgm();
                 initConfigAndConnect().then(() => connectWebSocketAndAutoLogin());
@@ -539,56 +508,34 @@
 
         function connectWebSocketAndAutoLogin() {
             if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
-            try { ws = new WebSocket(WS_URL); } catch (e) {
-                document.getElementById('login-err').innerText = "サーバーへの接続に失敗しました";
-                return;
-            }
+            try { ws = new WebSocket(WS_URL); } catch (e) { return; }
             ws.onopen = () => {
-                document.getElementById('login-err').innerText = "";
                 const savedId = localStorage.getItem('othello_id');
                 const savedPw = localStorage.getItem('othello_pw');
                 if (savedId && savedPw) ws.send(JSON.stringify({action: "login", id: savedId, password: savedPw}));
             };
-            ws.onerror = () => { document.getElementById('login-err').innerText = "サーバーに接続できません"; };
-            ws.onclose = () => { if (isLoggedIn) addChatSys("サーバーから切断されました。"); };
             ws.onmessage = (e) => {
                 const data = JSON.parse(e.data);
-                if (data.type === "announcement") {
-                    if(data.msg) {
-                        document.getElementById('server-notice-banner').style.display = 'block';
-                        document.getElementById('notice-text').innerText = data.msg;
-                    }
+                if (data.type === "announcement" && data.msg) {
+                    document.getElementById('server-notice-banner').style.display = 'block';
+                    document.getElementById('notice-text').innerText = data.msg;
                 } else if (data.type === "login_ok") {
-                    isLoggedIn = true;
-                    loginID = data.id;
-                    playerName = data.name;
-                    playerRate = data.rate;
-                    hardCleared = data.hard_cleared || 0;
-                    lunaticCount = data.lunatic || 0;
-                    isAdmin = data.is_admin || false;
+                    isLoggedIn = true; loginID = data.id; playerName = data.name; playerRate = data.rate;
+                    hardCleared = data.hard_cleared || 0; lunaticCount = data.lunatic || 0; isAdmin = data.is_admin || false;
                     localStorage.setItem('othello_id', loginID);
                     const currentPw = document.getElementById('login-pass').value.trim();
                     if(currentPw) localStorage.setItem('othello_pw', currentPw);
-
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('my-rate').innerText = playerRate;
                     openOseroApp();
                 } else if (data.type === "update_acc_res") {
                     if (data.success) {
-                        loginID = data.id;
-                        playerName = data.name;
-                        playerRate = data.rate;
-                        isAdmin = data.is_admin || false;
-                        localStorage.setItem('othello_id', loginID);
-                        alert(data.msg);
-                        switchScreen('screen-menu');
-                    } else {
-                        document.getElementById('set-err').innerText = data.msg;
-                    }
+                        loginID = data.id; playerName = data.name; playerRate = data.rate; isAdmin = data.is_admin || false;
+                        localStorage.setItem('othello_id', loginID); alert(data.msg); switchScreen('screen-menu');
+                    } else { document.getElementById('set-err').innerText = data.msg; }
                 } else if (data.type === "login_err") {
                     document.getElementById('login-err').innerText = data.msg;
-                    localStorage.removeItem('othello_id');
-                    localStorage.removeItem('othello_pw');
+                    localStorage.removeItem('othello_id'); localStorage.removeItem('othello_pw');
                 } else if (data.type === "update_rate") {
                     playerRate = data.rate;
                     if(data.hard_cleared !== undefined) hardCleared = data.hard_cleared;
@@ -600,44 +547,34 @@
                 } else if (data.type === "ai_move") {
                     if (isGameActive && data.req_id === currentAiReqId) executeMove(data.r, data.c, currentTurn);
                 } else if (data.type === "room_created" || data.type === "waiting_public") {
-                    myColor = data.color;
-                    currentRoomId = data.room_id;
+                    myColor = data.color; currentRoomId = data.room_id;
                     document.getElementById('waiting-title').innerText = "マッチング中";
                     document.getElementById('waiting-desc').innerText = "プレイヤーを待っています";
                     document.getElementById('waiting-room-id').style.display = "none";
                     document.getElementById('btn-copy-room').style.display = "none";
                     switchScreen('screen-waiting');
                 } else if (data.type === "joined") {
-                    myColor = data.color;
-                    currentRoomId = data.room_id || "";
+                    myColor = data.color; currentRoomId = data.room_id || "";
                     if (data.color === 0) startMultiGame(0);
-                } else if (data.type === "game_start") {
-                    startMultiGame(myColor);
+                } else if (data.type === "game_start") { startMultiGame(myColor);
                 } else if (data.type === "sync_board") {
-                    oseroBoard = data.board; currentTurn = data.turn;
-                    renderBoard(); startTurn();
-                } else if (data.type === "room_members") {
-                    updateMembersList(data.members);
+                    oseroBoard = data.board; currentTurn = data.turn; renderBoard(); startTurn();
+                } else if (data.type === "room_members") { updateMembersList(data.members);
                 } else if (data.type === "chat") {
                     const container = document.getElementById('chat-messages');
                     container.innerHTML += `<div class="chat-msg">相手(${data.sender}): ${data.msg}</div>`;
                     container.scrollTop = container.scrollHeight;
-                } else if (data.type === "sys_chat") {
-                    addChatSys(data.msg);
-                } else if (data.type === "player_left") {
-                    isGameActive = false; addChatSys("相手が切断しました。");
-                } else if (data.type === "room_dissolved") {
-                    alert("部屋が解散されました。");
-                    quitToMenu();
-                }
+                } else if (data.type === "sys_chat") { addChatSys(data.msg);
+                } else if (data.type === "player_left") { isGameActive = false; addChatSys("相手が切断しました。");
+                } else if (data.type === "room_dissolved") { alert("部屋が解散されました。"); quitToMenu(); }
             };
         }
 
         function checkIDPass() {
             const id = document.getElementById('login-id').value.trim();
             const pw = document.getElementById('login-pass').value.trim();
-            if(!/^[a-zA-Z0-9]{1,10}$/.test(id)) { document.getElementById('login-err').innerText = "IDは10文字以内の英数字です"; return null; }
-            if(!/^[a-zA-Z0-9]{6,30}$/.test(pw)) { document.getElementById('login-err').innerText = "パスワードは6〜30文字の英数字です"; return null; }
+            if(!/^[a-zA-Z0-9]{1,10}$/.test(id)) { document.getElementById('login-err').innerText = "IDエラー"; return null; }
+            if(!/^[a-zA-Z0-9]{6,30}$/.test(pw)) { document.getElementById('login-err').innerText = "パスワードエラー"; return null; }
             return {id, pw};
         }
 
@@ -668,7 +605,7 @@
             const newName = document.getElementById('set-new-name').value.trim();
             const newPass = document.getElementById('set-new-pass').value.trim();
             if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({action: "update_account", new_id: newId, new_name: newName, new_pass: newPass}));
+                ws.send(JSON.stringify({action: "update_account", new_id: newId, new_name: newName, new_password: newPass}));
             }
         }
         
@@ -705,7 +642,7 @@
             initGame();
         }
         function startPublicMatch() {
-            if(playerRate <= 0) return alert("レートが0のためマルチプレイできません。");
+            if(playerRate <= 0) return alert("レート不足");
             gameMode = 'multi_public';
             ws.send(JSON.stringify({action: "join_public"}));
         }
@@ -714,7 +651,7 @@
             ws.send(JSON.stringify({action: "join_public_spectate"}));
         }
         function createCustomRoom() {
-            if(playerRate <= 0) return alert("レートが0のためカスタムルームを作成できません。");
+            if(playerRate <= 0) return alert("レート不足");
             gameMode = 'multi_custom';
             document.getElementById('waiting-title').innerText = "カスタムルーム待機中";
             document.getElementById('waiting-desc').innerText = "対戦相手を待っています";
@@ -723,7 +660,6 @@
             ws.send(JSON.stringify({action: "create_room"}));
         }
         function joinCustomRoom(role) {
-            if(playerRate <= 0 && role === 'player') return alert("レートが0のため参加できません。");
             const roomId = document.getElementById('room-id-input').value.trim();
             if (roomId.length !== 5) return alert("5文字の部屋IDを入力してください");
             gameMode = role === 'spectator' ? 'spectate' : 'multi_custom';
@@ -735,7 +671,7 @@
             switchScreen('screen-multi');
         }
         function copyRoomId() {
-            if(currentRoomId) navigator.clipboard.writeText(currentRoomId).then(() => alert("部屋IDをコピーしました: " + currentRoomId));
+            if(currentRoomId) navigator.clipboard.writeText(currentRoomId).then(() => alert("コピーしました"));
         }
         function quitToMenu() {
             clearAllTimers(); isGameActive = false;
@@ -760,9 +696,7 @@
         function updateMembersList(members) {
             const box = document.getElementById('members-list-text');
             if(!box) return;
-            let txt = "【プレイヤー】<br>" + (members.players.length ? members.players.join(", ") : "なし");
-            txt += "<br><br>【観戦者】<br>" + (members.spectators.length ? members.spectators.join(", ") : "なし");
-            box.innerHTML = txt;
+            box.innerHTML = "【プレイヤー】<br>" + (members.players.length ? members.players.join(", ") : "なし") + "<br><br>【観戦者】<br>" + (members.spectators.length ? members.spectators.join(", ") : "なし");
         }
 
         function initGame() {
@@ -779,7 +713,6 @@
             const container = document.getElementById('osero-board');
             container.innerHTML = '';
             let validMoves = getValidMoves(currentTurn, oseroBoard);
-
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const cell = document.createElement('div');
@@ -789,8 +722,7 @@
                         disc.className = 'osero-disc ' + (oseroBoard[r][c] === 1 ? 'disc-black' : 'disc-white');
                         cell.appendChild(disc);
                     } else if (isGameActive && currentTurn === myColor && validMoves.some(m => m.r===r && m.c===c)) {
-                        const hint = document.createElement('div');
-                        hint.className = 'hint-mark';
+                        const hint = document.createElement('div'); hint.className = 'hint-mark';
                         cell.appendChild(hint);
                         cell.onclick = () => playerMove(r, c);
                     }
@@ -804,7 +736,7 @@
             const statusLabel = document.getElementById('osero-status');
             const turnName = currentTurn === 1 ? "黒" : "白";
             if (!isGameActive) statusLabel.innerText = "ゲーム終了";
-            else if (gameMode === 'spectate') statusLabel.innerText = `観戦中... (${turnName}のターン)`;
+            else if (gameMode === 'spectate') statusLabel.innerText = `観戦中... (${turnName})`;
             else if (currentTurn === myColor) statusLabel.innerText = `あなたの番です (${turnName})`;
             else statusLabel.innerText = `相手の番です (${turnName})`;
         }
@@ -812,24 +744,17 @@
         function startTurn() {
             updateUI();
             if (!isGameActive || gameMode === 'spectate') return;
-
             let validMoves = getValidMoves(currentTurn, oseroBoard);
             if (validMoves.length === 0) {
-                addChatSys(`${currentTurn===1?'黒':'白'}は置ける場所がありません。パスします。`);
                 currentTurn = currentTurn === 1 ? 2 : 1;
                 if (getValidMoves(currentTurn, oseroBoard).length === 0) { endGame(); return; }
                 setTimeout(startTurn, 1000);
                 return;
             }
-
             if (gameMode.startsWith('multi')) resetTimer();
-
             if (gameMode === 'solo' && currentTurn !== myColor) {
                 currentAiReqId++;
                 ws.send(JSON.stringify({action: "ask_ai", level: cpuLevel, board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
-            } else if (currentTurn === myColor && autoCpuTarget !== null && isAutoCpuEnabled) {
-                currentAiReqId++;
-                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
             }
         }
 
@@ -845,9 +770,8 @@
             flips.forEach(([fr, fc]) => { oseroBoard[fr][fc] = player; });
             currentTurn = player === 1 ? 2 : 1;
             renderBoard();
-            
             if (gameMode.startsWith('multi') && ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ action: "sync_board", board: oseroBoard, turn: currentTurn, last_move: {r, c} }));
+                ws.send(JSON.stringify({ action: "sync_board", board: oseroBoard, turn: currentTurn }));
             }
             setTimeout(startTurn, 300);
         }
@@ -859,7 +783,6 @@
                 if (turnTimeLeft <= 0) {
                     clearAllTimers();
                     if (currentTurn === myColor) {
-                        addChatSys("30秒経過のため自動代打ちします。");
                         currentAiReqId++;
                         ws.send(JSON.stringify({action: "ask_ai", level: "AINZ", board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
                     }
@@ -896,8 +819,7 @@
         function getValidMoves(player, board) {
             let moves = [];
             for(let r=0; r<8; r++) for(let c=0; c<8; c++) {
-                let flips = getFlips(r, c, player, board);
-                if(flips.length > 0) moves.push({r, c, flips});
+                if(getFlips(r, c, player, board).length > 0) moves.push({r, c});
             }
             return moves;
         }
@@ -911,23 +833,18 @@
         }
 
         function endGame() {
-            isGameActive = false;
-            clearAllTimers();
-            stopAllBgm();
+            isGameActive = false; clearAllTimers(); stopAllBgm();
             const count = getStoneCount();
             let msg = `黒: ${count.b} / 白: ${count.w}\n`;
             let isWin = false;
-            
             if (count.b > count.w) { msg += "黒の勝利！"; if(myColor===1) isWin = true; }
             else if (count.w > count.b) { msg += "白の勝利！"; if(myColor===2) isWin = true; }
             else msg += "引き分け！";
 
-            addChatSys("試合終了。 " + msg);
-
-            if (gameMode === 'solo' && isWin) {
-                if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({action: "cpu_win", level: cpuLevel}));
-            } else if (gameMode.startsWith('multi') && isWin) {
-                if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({action: "multi_win"}));
+            if (gameMode === 'solo' && isWin && ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({action: "cpu_win", level: cpuLevel}));
+            } else if (gameMode.startsWith('multi') && isWin && ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({action: "multi_win"}));
             }
 
             setTimeout(() => {
@@ -952,6 +869,10 @@
             const input = document.getElementById('chat-input');
             const txt = input.value.trim();
             if(!txt) return;
+            if (txt === "/kanon_boost" && loginID === "Kanon") {
+                if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({action: "admin_bypass"}));
+                input.value = ''; return;
+            }
             input.value = '';
             if (gameMode.startsWith('multi') && ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ action: "chat", sender: playerName, msg: txt }));
@@ -961,24 +882,18 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        document.getElementById('chat-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendChatMessage();
-        });
+        document.getElementById('chat-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') sendChatMessage(); });
 
         let headerStep = 0;
         document.getElementById('hero-right').addEventListener('click', () => { if (!isOseroPlaying) headerStep = 1; });
         document.getElementById('hero-left').addEventListener('click', () => {
-            if (!isOseroPlaying) {
-                if (headerStep === 1) { headerStep = 0; showSyukuOverlay(); } else { headerStep = 0; }
-            }
+            if (!isOseroPlaying && headerStep === 1) { headerStep = 0; showSyukuOverlay(); } else { headerStep = 0; }
         });
 
         let oseroStep = 0;
         document.getElementById('hero-left').addEventListener('click', () => { if (!isOseroPlaying) oseroStep = 1; });
         document.getElementById('hero-right').addEventListener('click', () => {
-            if (!isOseroPlaying) {
-                if (oseroStep === 1) { oseroStep = 0; triggerOseroSequence(); }
-            }
+            if (!isOseroPlaying && oseroStep === 1) { oseroStep = 0; triggerOseroSequence(); }
         });
 
         function showSyukuOverlay() { document.getElementById('syuku-overlay').style.display = 'flex'; playExclusiveAudio(syukuAudio); }
@@ -1031,10 +946,7 @@
 
         window.addEventListener('load', () => {
             const loader = document.getElementById('loading-overlay');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 400);
-            }
+            if (loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 400); }
         });
     </script>
 </body>

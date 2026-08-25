@@ -97,7 +97,7 @@
         .login-title { color: #fff; font-size: 22px; font-weight: bold; margin-bottom: 5px; }
         .login-err { color: #ff4500; font-size: 13px; min-height: 18px; }
         
-        /* 修正：レート表示等のバーを前面に確実に固定 */
+        /* レート表示等のバーを前面に確実に固定 */
         #top-info-bar { position: fixed; top: 15px; right: 15px; display: none; gap: 8px; z-index: 100500; background: rgba(17, 17, 17, 0.85); padding: 5px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .info-badge { background: #222; border: 1px solid #444; padding: 6px 12px; border-radius: 5px; color: #fff; font-weight: bold; font-size: 13px; display: flex; align-items: center; }
         .rate-val { color: #ffd700; margin-left: 5px; }
@@ -333,6 +333,9 @@
     </div>
 
     <script>
+        // 【重要】サーバーから発行されたWebSocketのURLがここに自動反映されます
+        let WS_URL = "wss://node-innovations-cameron-talks.trycloudflare.com";
+
         const MAX_SE_VOL = 0.35;
         const MAX_BGM_VOL = 0.22;
         let currentAudio = null;
@@ -423,7 +426,6 @@
         function showSyukuOverlay() { document.getElementById('syuku-overlay').style.display = 'flex'; playExclusiveAudio(syukuAudio); }
         function closeSyukuOverlay() { document.getElementById('syuku-overlay').style.display = 'none'; if (currentAudio === syukuAudio) { syukuAudio.pause(); syukuAudio.currentTime = 0; currentAudio = null; } }
 
-        let WS_URL = "wss://node-innovations-cameron-talks.trycloudflare.com";
         let ws = null;
         let isLoggedIn = false;
         let loginID = "";
@@ -443,7 +445,6 @@
 
         function initConfigAndConnect() {
             return new Promise((resolve) => {
-                // 自動接続時の初期化処理
                 setTimeout(() => {
                     const loader = document.getElementById('loading-overlay');
                     if (loader) {
@@ -981,7 +982,6 @@
             rankCount = 3; document.getElementById('rank-text').innerText = '3位';
         }
 
-        // ページ読み込み時にロード画面を終了
         window.addEventListener('load', () => {
             const loader = document.getElementById('loading-overlay');
             if (loader) {

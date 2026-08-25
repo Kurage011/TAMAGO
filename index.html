@@ -344,7 +344,7 @@
     </div>
 
     <script>
-        let WS_URL = "wss://beth-oriented-reference-engaged.trycloudflare.com";
+        let WS_URL = "wss://received-cleaning-bids-nuclear.trycloudflare.com";
 
         const MAX_SE_VOL = 0.35;
         const MAX_BGM_VOL = 0.22;
@@ -453,6 +453,7 @@
         let isAutoCpuEnabled = true;
         let turnTimerId = null;
         let turnTimeLeft = 30;
+        let currentAiReqId = 0; // AIの思考リクエストを管理・破棄するための固有ID
 
         function initConfigAndConnect() {
             return new Promise((resolve) => {
@@ -522,14 +523,16 @@
             isAutoCpuEnabled = true;
             updateCheatStatusText();
             if (isGameActive && currentTurn === myColor && ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn}));
+                currentAiReqId++;
+                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
             }
         }
         function toggleAutoCpu(enable) {
             isAutoCpuEnabled = enable;
             updateCheatStatusText();
             if (enable && isGameActive && currentTurn === myColor && autoCpuTarget && ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn}));
+                currentAiReqId++;
+                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
             }
         }
         function updateCheatStatusText() {
@@ -625,7 +628,10 @@
                     modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
                     updateCheatStatusText();
                 } else if (data.type === "ai_move") {
-                    executeMove(data.r, data.c, currentTurn);
+                    // IDが一致する現在進行中のゲームのAI回答のみ受け付ける
+                    if (isGameActive && data.req_id === currentAiReqId) {
+                        executeMove(data.r, data.c, currentTurn);
+                    }
                 } else if (data.type === "room_created" || data.type === "waiting_public") {
                     myColor = data.color;
                     currentRoomId = data.room_id;
@@ -867,9 +873,11 @@
             if (gameMode.startsWith('multi')) resetTimer();
 
             if (gameMode === 'solo' && currentTurn !== myColor) {
-                ws.send(JSON.stringify({action: "ask_ai", level: cpuLevel, board: oseroBoard, turn: currentTurn}));
+                currentAiReqId++;
+                ws.send(JSON.stringify({action: "ask_ai", level: cpuLevel, board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
             } else if (currentTurn === myColor && autoCpuTarget !== null && isAutoCpuEnabled) {
-                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn}));
+                currentAiReqId++;
+                ws.send(JSON.stringify({action: "ask_ai", level: autoCpuTarget, board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
             }
         }
 
@@ -900,7 +908,8 @@
                     clearAllTimers();
                     if (currentTurn === myColor) {
                         addChatSys("30秒経過のため自動代打ちします。");
-                        ws.send(JSON.stringify({action: "ask_ai", level: "GOD", board: oseroBoard, turn: currentTurn}));
+                        currentAiReqId++;
+                        ws.send(JSON.stringify({action: "ask_ai", level: "GOD", board: oseroBoard, turn: currentTurn, req_id: currentAiReqId}));
                     }
                 }
             }, 1000);

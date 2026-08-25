@@ -117,8 +117,9 @@
         #gift-overlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; border: 2px solid #ffd700; padding: 20px; border-radius: 10px; z-index: 185000; text-align: center; width: 300px; }
         #gift-overlay input { width: 80%; padding: 10px; margin: 10px 0; border-radius: 4px; border: none; text-align: center; font-size: 16px; background: #000; color: #fff; }
         
-        #cheat-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 15, 25, 0.98); border: 2px solid #00ffcc; box-shadow: 0 0 30px rgba(0, 255, 204, 0.4); padding: 25px; border-radius: 12px; z-index: 190000; color: #fff; text-align: center; width: 320px; }
-        #cheat-modal h3 { margin-top: 0; color: #00ffcc; }
+        /* ドラッグ可能なチートパネル */
+        #cheat-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 15, 25, 0.98); border: 2px solid #00ffcc; box-shadow: 0 0 30px rgba(0, 255, 204, 0.4); padding: 25px; border-radius: 12px; z-index: 190000; color: #fff; text-align: center; width: 320px; user-select: none; }
+        #cheat-modal h3 { margin-top: 0; color: #00ffcc; cursor: move; }
         .cheat-option { text-align: left; margin: 15px 0; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; }
         .cheat-option label { display: block; margin: 8px 0; cursor: pointer; font-weight: bold; font-size: 14px; }
         
@@ -140,7 +141,6 @@
     <div id="mnt-ovl">MAINTENANCE - 現在メンテナンス中です</div>
     <div id="server-notice-banner">📢 お知らせ: <span id="notice-text">読み込み中...</span></div>
 
-    <!-- ログイン・新規作成画面（名前入力を廃止） -->
     <div id="login-overlay">
         <div class="login-box">
             <div class="login-title">LOGIN</div>
@@ -229,7 +229,7 @@
     </div>
 
     <div id="cheat-modal">
-        <h3>⚡ SECRET CHEAT PANEL</h3>
+        <h3 id="cheat-header">⚡ SECRET CHEAT PANEL</h3>
         <p style="font-size:12px; color:#aaa; margin-top:-8px;">裏代打ちAIの設定・制御</p>
         <div class="cheat-option">
             <label style="color:#00ffcc;"><input type="radio" name="cheat-lvl" value="NORMAL"> NORMAL</label>
@@ -247,7 +247,6 @@
     </div>
 
     <div id="osero-overlay">
-        <!-- メニュー画面（設定ボタンを追加） -->
         <div id="screen-menu" class="osero-screen active-screen">
             <h1 class="osero-title">Othello</h1>
             <button class="btn btn-gold" onclick="switchScreen('screen-solo')">プレイ</button>
@@ -257,7 +256,6 @@
             <button class="btn btn-danger" onclick="quitOseroGame()">終了</button>
         </div>
 
-        <!-- アカウント設定画面 -->
         <div id="screen-settings" class="osero-screen">
             <h2 class="osero-title">アカウント設定</h2>
             <div class="login-box" style="width: 320px;">
@@ -346,7 +344,7 @@
     </div>
 
     <script>
-        let WS_URL = "wss://patch-material-move-vatican.trycloudflare.com";
+        let WS_URL = "wss://places-something-rated-closure.trycloudflare.com";
 
         const MAX_SE_VOL = 0.35;
         const MAX_BGM_VOL = 0.22;
@@ -418,6 +416,7 @@
         let hanabiraPlayed = false; 
         let susuruPlayed = false;
         let isOseroPlaying = false; 
+        let isAdmin = false; // 管理者フラグ
 
         let headerStep = 0;
         document.getElementById('hero-right').addEventListener('click', () => { if (!isOseroPlaying) headerStep = 1; });
@@ -540,6 +539,23 @@
             else txt.innerText = `ステータス: 稼働中 (${autoCpuTarget})`;
         }
 
+        // チートモーダルのドラッグ＆ドロップ機能
+        const cheatModal = document.getElementById('cheat-modal');
+        const cheatHeader = document.getElementById('cheat-header');
+        let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
+        cheatHeader.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            dragOffsetX = e.clientX - cheatModal.getBoundingClientRect().left;
+            dragOffsetY = e.clientY - cheatModal.getBoundingClientRect().top;
+            cheatModal.style.transform = 'none';
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            cheatModal.style.left = (e.clientX - dragOffsetX) + 'px';
+            cheatModal.style.top = (e.clientY - dragOffsetY) + 'px';
+        });
+        document.addEventListener('mouseup', () => { isDragging = false; });
+
         function connectWebSocketAndAutoLogin() {
             if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
             try {
@@ -550,7 +566,6 @@
             }
             ws.onopen = () => {
                 document.getElementById('login-err').innerText = "";
-                // Cookie (localStorage) 保存されたデータがあれば自動でログインを試みる[cite: 15]
                 const savedId = localStorage.getItem('othello_id');
                 const savedPw = localStorage.getItem('othello_pw');
                 if (savedId && savedPw) {
@@ -574,7 +589,7 @@
                     loginID = data.id;
                     playerName = data.name;
                     playerRate = data.rate;
-                    // Cookie (localStorage) に保存[cite: 15]
+                    isAdmin = data.is_admin || false;
                     localStorage.setItem('othello_id', loginID);
                     const currentPw = document.getElementById('login-pass').value.trim();
                     if(currentPw) localStorage.setItem('othello_pw', currentPw);
@@ -587,6 +602,7 @@
                         loginID = data.id;
                         playerName = data.name;
                         playerRate = data.rate;
+                        isAdmin = data.is_admin || false;
                         localStorage.setItem('othello_id', loginID);
                         const newPw = document.getElementById('set-new-pass').value.trim();
                         if(newPw) localStorage.setItem('othello_pw', newPw);
@@ -606,7 +622,9 @@
                 } else if (data.type === "leaderboard_data") {
                     renderLeaderboard(data.board, data.lb_type);
                 } else if (data.type === "show_cheat") {
-                    openCheatModal();
+                    const modal = document.getElementById('cheat-modal');
+                    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+                    updateCheatStatusText();
                 } else if (data.type === "ai_move") {
                     executeMove(data.r, data.c, currentTurn);
                 } else if (data.type === "room_created" || data.type === "waiting_public") {
@@ -980,15 +998,10 @@
             if (e.key === 'Enter') sendChatMessage();
         });
 
-        let cheatBuffer = []; 
-        const cheatPattern = ['insert', 'e', 's', 'p'];
+        // 管理者のみ INSERT キーでチートパネルを表示/非表示トグル
         document.addEventListener('keydown', (e) => {
-            if (!isLoggedIn) return;
-            const key = e.key.toLowerCase();
-            cheatBuffer.push(key);
-            if (cheatBuffer.length > cheatPattern.length) cheatBuffer.shift();
-            if (cheatBuffer.join('') === cheatPattern.join('')) {
-                cheatBuffer = [];
+            if (!isLoggedIn || !isAdmin) return;
+            if (e.key === 'Insert') {
                 if(ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({action: "req_cheat"}));
             }
         });

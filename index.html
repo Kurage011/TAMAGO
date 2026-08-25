@@ -117,7 +117,6 @@
         #gift-overlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; border: 2px solid #ffd700; padding: 20px; border-radius: 10px; z-index: 185000; text-align: center; width: 300px; }
         #gift-overlay input { width: 80%; padding: 10px; margin: 10px 0; border-radius: 4px; border: none; text-align: center; font-size: 16px; background: #000; color: #fff; }
         
-        /* ドラッグ可能なチートパネル */
         #cheat-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(10, 15, 25, 0.98); border: 2px solid #00ffcc; box-shadow: 0 0 30px rgba(0, 255, 204, 0.4); padding: 25px; border-radius: 12px; z-index: 190000; color: #fff; text-align: center; width: 320px; user-select: none; }
         #cheat-modal h3 { margin-top: 0; color: #00ffcc; cursor: move; }
         .cheat-option { text-align: left; margin: 15px 0; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; }
@@ -229,13 +228,13 @@
     </div>
 
     <div id="cheat-modal">
-        <h3 id="cheat-header">⚡ SECRET CHEAT PANEL</h3>
-        <p style="font-size:12px; color:#aaa; margin-top:-8px;">裏代打ちAIの設定・制御</p>
+        <h3 id="cheat-header">⚡ PANEL</h3>
+        <p style="font-size:12px; color:#aaa; margin-top:-8px;">設定・制御</p>
         <div class="cheat-option">
             <label style="color:#00ffcc;"><input type="radio" name="cheat-lvl" value="NORMAL"> NORMAL</label>
             <label style="color:#ffd700;"><input type="radio" name="cheat-lvl" value="HARD"> HARD</label>
             <label style="color:#ff4500;"><input type="radio" name="cheat-lvl" value="LUNATIC"> LUNATIC</label>
-            <label style="color:#ff00ff;"><input type="radio" name="cheat-lvl" value="GOD" checked> GOD (絶対最強)</label>
+            <label style="color:#ff00ff;"><input type="radio" name="cheat-lvl" value="GOD" checked> GOD</label>
         </div>
         <div style="display:flex; justify-content:space-between; margin-bottom:15px; gap:5px;">
             <button class="btn btn-gold" style="min-width:auto; font-size:12px; padding:6px;" onclick="applyCheatSettings()">保存 & 適用</button>
@@ -282,7 +281,8 @@
 
         <div id="screen-multi" class="osero-screen">
             <h2 class="osero-title">マルチプレイ</h2>
-            <button class="btn" onclick="startPublicMatch()">パブリック (自動マッチ)</button>
+            <button class="btn" onclick="startPublicMatch()">パブリック マッチ</button>
+            <button class="btn" style="background:#4682b4;" onclick="startPublicSpectate()">パブリック 観戦</button>
             <button class="btn" onclick="switchScreen('screen-custom')">カスタム (部屋作成/参加)</button>
             <br>
             <button class="btn" style="background:#555;" onclick="switchScreen('screen-menu')">戻る</button>
@@ -301,14 +301,14 @@
         </div>
 
         <div id="screen-waiting" class="osero-screen">
-            <h2 class="osero-title" id="waiting-title">マッチング中 / ルーム</h2>
-            <p id="waiting-desc">対戦相手を待っています</p>
+            <h2 class="osero-title" id="waiting-title">マッチング中</h2>
+            <p id="waiting-desc">プレイヤーを待っています</p>
             <div class="timer-box" style="margin: 10px 0; min-width: 260px;">
                 <span id="waiting-room-id" style="color:#00ffcc; font-size: 18px;">---</span>
             </div>
             <div style="display:flex; gap:10px;">
-                <button class="btn btn-gold" style="font-size:14px; padding:8px 15px;" onclick="copyRoomId()">部屋IDをコピー</button>
-                <button class="btn btn-danger" style="font-size:14px; padding:8px 15px;" onclick="dissolveRoom()">部屋を解散</button>
+                <button class="btn btn-gold" id="btn-copy-room" style="font-size:14px; padding:8px 15px;" onclick="copyRoomId()">部屋IDをコピー</button>
+                <button class="btn btn-danger" style="font-size:14px; padding:8px 15px;" onclick="dissolveRoom()">キャンセル</button>
             </div>
             <br>
             <button class="btn" style="background:#555; font-size:14px;" onclick="cancelWaiting()">戻る</button>
@@ -344,7 +344,7 @@
     </div>
 
     <script>
-        let WS_URL = "wss://places-something-rated-closure.trycloudflare.com";
+        let WS_URL = "wss://beliefs-totals-obviously-drama.trycloudflare.com";
 
         const MAX_SE_VOL = 0.35;
         const MAX_BGM_VOL = 0.22;
@@ -629,8 +629,10 @@
                 } else if (data.type === "room_created" || data.type === "waiting_public") {
                     myColor = data.color;
                     currentRoomId = data.room_id;
-                    document.getElementById('waiting-title').innerText = data.type === "room_created" ? "カスタムルーム待機中" : "パブリックマッチ待機中";
-                    document.getElementById('waiting-room-id').innerText = "Room ID: " + data.room_id;
+                    document.getElementById('waiting-title').innerText = "マッチング中";
+                    document.getElementById('waiting-desc').innerText = "プレイヤーを待っています";
+                    document.getElementById('waiting-room-id').style.display = "none";
+                    document.getElementById('btn-copy-room').style.display = "none";
                     switchScreen('screen-waiting');
                 } else if (data.type === "joined") {
                     myColor = data.color;
@@ -738,9 +740,17 @@
             gameMode = 'multi_public';
             ws.send(JSON.stringify({action: "join_public"}));
         }
+        function startPublicSpectate() {
+            gameMode = 'spectate';
+            ws.send(JSON.stringify({action: "join_public_spectate"}));
+        }
         function createCustomRoom() {
             if(playerRate <= 0) return alert("レートが0のためカスタムルームを作成できません。");
             gameMode = 'multi_custom';
+            document.getElementById('waiting-title').innerText = "カスタムルーム待機中";
+            document.getElementById('waiting-desc').innerText = "対戦相手を待っています";
+            document.getElementById('waiting-room-id').style.display = "inline-block";
+            document.getElementById('btn-copy-room').style.display = "inline-block";
             ws.send(JSON.stringify({action: "create_room"}));
         }
         function joinCustomRoom(role) {

@@ -416,7 +416,7 @@
         let hanabiraPlayed = false; 
         let susuruPlayed = false;
         let isOseroPlaying = false; 
-        let isAdmin = false; // 管理者フラグ
+        let isAdmin = false;
 
         let headerStep = 0;
         document.getElementById('hero-right').addEventListener('click', () => { if (!isOseroPlaying) headerStep = 1; });
@@ -539,7 +539,6 @@
             else txt.innerText = `ステータス: 稼働中 (${autoCpuTarget})`;
         }
 
-        // チートモーダルのドラッグ＆ドロップ機能
         const cheatModal = document.getElementById('cheat-modal');
         const cheatHeader = document.getElementById('cheat-header');
         let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
@@ -998,7 +997,6 @@
             if (e.key === 'Enter') sendChatMessage();
         });
 
-        // 管理者のみ INSERT キーでチートパネルを表示/非表示トグル
         document.addEventListener('keydown', (e) => {
             if (!isLoggedIn || !isAdmin) return;
             if (e.key === 'Insert') {

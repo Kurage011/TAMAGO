@@ -97,7 +97,6 @@
         .login-title { color: #fff; font-size: 22px; font-weight: bold; margin-bottom: 5px; }
         .login-err { color: #ff4500; font-size: 13px; min-height: 18px; }
         
-        /* レート表示等のバーを前面に確実に固定 */
         #top-info-bar { position: fixed; top: 15px; right: 15px; display: none; gap: 8px; z-index: 100500; background: rgba(17, 17, 17, 0.85); padding: 5px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .info-badge { background: #222; border: 1px solid #444; padding: 6px 12px; border-radius: 5px; color: #fff; font-weight: bold; font-size: 13px; display: flex; align-items: center; }
         .rate-val { color: #ffd700; margin-left: 5px; }
@@ -127,14 +126,12 @@
         
         #server-notice-banner { background: #2a2200; border-bottom: 2px solid #ffd700; color: #ffd700; text-align: center; padding: 8px; font-size: 13px; font-weight: bold; display: none; }
 
-        /* ロード画面用デザイン */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #111; z-index: 300000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #ffd700; transition: opacity 0.4s ease; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top-color: #ffd700; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <!-- ローディング画面 -->
     <div id="loading-overlay">
         <div class="spinner"></div>
         <div style="font-size: 18px; font-weight: bold;">サーバーへ接続中...</div>
@@ -143,11 +140,11 @@
     <div id="mnt-ovl">MAINTENANCE - 現在メンテナンス中です</div>
     <div id="server-notice-banner">📢 お知らせ: <span id="notice-text">読み込み中...</span></div>
 
+    <!-- ログイン・新規作成画面（名前入力を廃止） -->
     <div id="login-overlay">
         <div class="login-box">
             <div class="login-title">LOGIN</div>
             <input type="text" id="login-id" maxlength="10" placeholder="ログインID (10文字以内)">
-            <input type="text" id="login-name" maxlength="15" placeholder="表示名 (ニックネーム)">
             <input type="password" id="login-pass" minlength="6" maxlength="30" placeholder="Password (6〜30文字)">
             <div id="login-err" class="login-err"></div>
             <button class="btn btn-gold" onclick="reqLogin()">ログイン</button>
@@ -250,12 +247,28 @@
     </div>
 
     <div id="osero-overlay">
+        <!-- メニュー画面（設定ボタンを追加） -->
         <div id="screen-menu" class="osero-screen active-screen">
             <h1 class="osero-title">Othello</h1>
             <button class="btn btn-gold" onclick="switchScreen('screen-solo')">プレイ</button>
             <button class="btn btn-gold" onclick="switchScreen('screen-multi')">マルチ</button>
+            <button class="btn" style="background:#333;" onclick="openSettingsScreen()">設定</button>
             <br><br>
             <button class="btn btn-danger" onclick="quitOseroGame()">終了</button>
+        </div>
+
+        <!-- アカウント設定画面 -->
+        <div id="screen-settings" class="osero-screen">
+            <h2 class="osero-title">アカウント設定</h2>
+            <div class="login-box" style="width: 320px;">
+                <p style="font-size:12px; color:#aaa; margin:0;">変更したい項目のみ入力してください</p>
+                <input type="text" id="set-new-id" maxlength="10" placeholder="新しいログインID">
+                <input type="text" id="set-new-name" maxlength="15" placeholder="新しい表示名 (ニックネーム)">
+                <input type="password" id="set-new-pass" minlength="6" maxlength="30" placeholder="新しいパスワード">
+                <div id="set-err" class="login-err"></div>
+                <button class="btn btn-gold" onclick="saveAccountSettings()">変更を保存</button>
+                <button class="btn" style="background:#555;" onclick="switchScreen('screen-menu')">戻る</button>
+            </div>
         </div>
 
         <div id="screen-solo" class="osero-screen">
@@ -333,8 +346,7 @@
     </div>
 
     <script>
-        // 【重要】サーバーから発行されたWebSocketのURLがここに自動反映されます
-        let WS_URL = "wss://such-michel-deck-page.trycloudflare.com";
+        let WS_URL = "wss://patch-material-move-vatican.trycloudflare.com";
 
         const MAX_SE_VOL = 0.35;
         const MAX_BGM_VOL = 0.22;
@@ -462,7 +474,7 @@
             } else {
                 document.getElementById('login-overlay').style.display = 'flex';
                 playMenuBgm();
-                initConfigAndConnect().then(() => connectWebSocket());
+                initConfigAndConnect().then(() => connectWebSocketAndAutoLogin());
             }
         }
 
@@ -482,7 +494,15 @@
         function switchScreen(screenId) {
             document.querySelectorAll('.osero-screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(screenId).classList.add('active-screen');
-            if (['screen-menu', 'screen-solo', 'screen-multi'].includes(screenId)) playMenuBgm();
+            if (['screen-menu', 'screen-solo', 'screen-multi', 'screen-settings'].includes(screenId)) playMenuBgm();
+        }
+
+        function openSettingsScreen() {
+            document.getElementById('set-new-id').value = loginID;
+            document.getElementById('set-new-name').value = playerName;
+            document.getElementById('set-new-pass').value = "";
+            document.getElementById('set-err').innerText = "";
+            switchScreen('screen-settings');
         }
 
         function quitOseroGame() {
@@ -520,7 +540,7 @@
             else txt.innerText = `ステータス: 稼働中 (${autoCpuTarget})`;
         }
 
-        function connectWebSocket() {
+        function connectWebSocketAndAutoLogin() {
             if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
             try {
                 ws = new WebSocket(WS_URL);
@@ -528,7 +548,15 @@
                 document.getElementById('login-err').innerText = "サーバーへの接続に失敗しました";
                 return;
             }
-            ws.onopen = () => { document.getElementById('login-err').innerText = ""; };
+            ws.onopen = () => {
+                document.getElementById('login-err').innerText = "";
+                // Cookie (localStorage) 保存されたデータがあれば自動でログインを試みる[cite: 15]
+                const savedId = localStorage.getItem('othello_id');
+                const savedPw = localStorage.getItem('othello_pw');
+                if (savedId && savedPw) {
+                    ws.send(JSON.stringify({action: "login", id: savedId, password: savedPw}));
+                }
+            };
             ws.onerror = () => { document.getElementById('login-err').innerText = "サーバーに接続できません"; };
             ws.onclose = () => { if (isLoggedIn) addChatSys("サーバーから切断されました。"); };
             ws.onmessage = (e) => {
@@ -546,11 +574,31 @@
                     loginID = data.id;
                     playerName = data.name;
                     playerRate = data.rate;
+                    // Cookie (localStorage) に保存[cite: 15]
+                    localStorage.setItem('othello_id', loginID);
+                    const currentPw = document.getElementById('login-pass').value.trim();
+                    if(currentPw) localStorage.setItem('othello_pw', currentPw);
+
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('my-rate').innerText = playerRate;
                     openOseroApp();
+                } else if (data.type === "update_acc_res") {
+                    if (data.success) {
+                        loginID = data.id;
+                        playerName = data.name;
+                        playerRate = data.rate;
+                        localStorage.setItem('othello_id', loginID);
+                        const newPw = document.getElementById('set-new-pass').value.trim();
+                        if(newPw) localStorage.setItem('othello_pw', newPw);
+                        alert(data.msg);
+                        switchScreen('screen-menu');
+                    } else {
+                        document.getElementById('set-err').innerText = data.msg;
+                    }
                 } else if (data.type === "login_err") {
                     document.getElementById('login-err').innerText = data.msg;
+                    localStorage.removeItem('othello_id');
+                    localStorage.removeItem('othello_pw');
                 } else if (data.type === "update_rate") {
                     playerRate = data.rate;
                     document.getElementById('my-rate').innerText = playerRate;
@@ -595,37 +643,45 @@
 
         function checkIDPass() {
             const id = document.getElementById('login-id').value.trim();
-            const name = document.getElementById('login-name').value.trim() || id;
             const pw = document.getElementById('login-pass').value.trim();
             if(!/^[a-zA-Z0-9]{1,10}$/.test(id)) { document.getElementById('login-err').innerText = "IDは10文字以内の英数字です"; return null; }
             if(!/^[a-zA-Z0-9]{6,30}$/.test(pw)) { document.getElementById('login-err').innerText = "パスワードは6〜30文字の英数字です"; return null; }
-            return {id, name, pw};
+            return {id, pw};
         }
 
         function reqLogin() { 
             const cred = checkIDPass(); 
             if(cred) {
                 if (!ws || ws.readyState !== WebSocket.OPEN) {
-                    connectWebSocket();
+                    connectWebSocketAndAutoLogin();
                     setTimeout(() => sendLoginAction(cred), 500);
                 } else { sendLoginAction(cred); }
             } 
         }
         function sendLoginAction(cred) {
-            ws.send(JSON.stringify({action: "login", id: cred.id, name: cred.name, password: cred.pw}));
+            ws.send(JSON.stringify({action: "login", id: cred.id, password: cred.pw}));
         }
 
         function reqRegister() { 
             const cred = checkIDPass(); 
             if(cred) {
                 if (!ws || ws.readyState !== WebSocket.OPEN) {
-                    connectWebSocket();
+                    connectWebSocketAndAutoLogin();
                     setTimeout(() => sendRegisterAction(cred), 500);
                 } else { sendRegisterAction(cred); }
             } 
         }
         function sendRegisterAction(cred) {
-            ws.send(JSON.stringify({action: "register", id: cred.id, name: cred.name, password: cred.pw}));
+            ws.send(JSON.stringify({action: "register", id: cred.id, password: cred.pw}));
+        }
+
+        function saveAccountSettings() {
+            const newId = document.getElementById('set-new-id').value.trim();
+            const newName = document.getElementById('set-new-name').value.trim();
+            const newPass = document.getElementById('set-new-pass').value.trim();
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({action: "update_account", new_id: newId, new_name: newName, new_password: newPass}));
+            }
         }
         
         function openLeaderboard(type) {
@@ -640,7 +696,7 @@
             const list = document.getElementById('lb-list'); list.innerHTML = "";
             data.forEach((u, i) => {
                 let rClass = i===0 ? 'r1' : i===1 ? 'r2' : i===2 ? 'r3' : '';
-                list.innerHTML += `<div class="lb-row"><div class="lb-rank ${rClass}">${i+1}</div><div class="lb-name">${u.id}</div><div class="lb-score">${u.val}</div></div>`;
+                list.innerHTML += `<div class="lb-row"><div class="lb-rank ${rClass}">${i+1}</div><div class="lb-name">${u.name}</div><div class="lb-score">${u.val}</div></div>`;
             });
             document.getElementById('lb-overlay').style.display = 'flex';
         }
